@@ -14,16 +14,24 @@ st.title("Coloring Book PDF Generator")
 
 prompts = st.text_area("Enter your prompts (one per line):")
 
+# Set the target DPI for the generated images
+target_dpi = 300
+
 if st.button("Generate Coloring Book PDF"):
     # Split prompts into a list
     prompt_list = [prompt.strip() for prompt in prompts.split("\n") if prompt.strip()]
+    
+    # Calculate image dimensions based on the PDF page size and target DPI
+    page_width, page_height = letter
+    image_width = int(page_width * target_dpi)
+    image_height = int(page_height * target_dpi)
     
     # Run Replicate model on each prompt
     images = []
     for prompt in prompt_list:
         output = replicate.run(
             "ai-forever/kandinsky-2.2:ad9d7879fbffa2874e1d909d1d37d9bc682889cc65b31f7bb00d2362619f194a",
-            input={"prompt": prompt}
+            input={"prompt": prompt, "width": image_width, "height": image_height}
         )
         image_url = output[0]  # Assuming the model returns a list with a single URL
         images.append(image_url)
@@ -34,7 +42,7 @@ if st.button("Generate Coloring Book PDF"):
     for image_url in images:
         response = requests.get(image_url)
         image_file = BytesIO(response.content)
-        image = Image(image_file, 6*inch, 6*inch)
+        image = Image(image_file, 8.5*inch, 11*inch)  # Fit the image to the page size
         elements.append(image)
     doc.build(elements)
     
