@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Image, PageBreak, KeepTogether
 from reportlab.lib.units import inch
 from reportlab.lib.colors import black
-from reportlab.platypus import Rect
+from reportlab.graphics.shapes import Rect  # Correct import for Rect
 
 # Set Replicate API token from Streamlit secrets
 os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
