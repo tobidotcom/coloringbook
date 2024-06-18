@@ -17,17 +17,17 @@ prompts = st.text_area("Enter your prompts (one per line):")
 if st.button("Generate Coloring Book PDF"):
     # Split prompts into a list
     prompt_list = [prompt.strip() for prompt in prompts.split("\n") if prompt.strip()]
-    
+
     # Run Replicate model on each prompt
     images = []
     for prompt in prompt_list:
         output = replicate.run(
-            "ai-forever/kandinsky-2.2:ad9d7879fbffa2874e1d909d1d37d9bc682889cc65b31f7bb00d2362619f194a",
+            "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
             input={"prompt": prompt}
         )
         image_url = output[0]  # Assuming the model returns a list with a single URL
         images.append(image_url)
-    
+
     # Create a PDF file with the generated images
     doc = SimpleDocTemplate("coloring_book.pdf", pagesize=letter)
     elements = []
@@ -37,7 +37,7 @@ if st.button("Generate Coloring Book PDF"):
         image = Image(image_file, 6*inch, 6*inch)
         elements.append(image)
     doc.build(elements)
-    
+
     # Display the PDF download link
     with open("coloring_book.pdf", "rb") as pdf_file:
         pdf_bytes = pdf_file.read()
