@@ -4,9 +4,8 @@ import os
 import requests
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, PageBreak
+from reportlab.platypus import SimpleDocTemplate, PageBreak, Image
 from reportlab.lib.units import inch
-from reportlab.graphics import renderPDF
 
 # Function to create a blank page
 def create_blank_page(page_size):
@@ -53,9 +52,8 @@ if st.button("Generate Coloring Book PDF"):
         image_file = BytesIO(response.content)
         blank_page_data = create_blank_page((8.5*inch, 11*inch))
 
-        # Draw the image on the canvas
-        image_width, image_height = 8*inch, 8*inch
-        image = renderPDF.drawInlineImage(image_file, 0, 0, image_width, image_height)
+        # Add the image to the PDF
+        image = Image(image_file, 8*inch, 8*inch)
         elements.append(image)
         elements.append(blank_page_data)
         elements.append(PageBreak())  # Add a page break after each image
