@@ -25,7 +25,8 @@ if st.button("Generate Coloring Book PDF"):
             "ai-forever/kandinsky-2.2:ad9d7879fbffa2874e1d909d1d37d9bc682889cc65b31f7bb00d2362619f194a",
             input={"prompt": prompt}
         )
-        images.append(output)
+        image_url = output[0]  # Assuming the model returns a list with a single URL
+        images.append(image_url)
     
     # Create a PDF file with the generated images
     doc = SimpleDocTemplate("coloring_book.pdf", pagesize=letter)
@@ -46,3 +47,4 @@ if st.button("Generate Coloring Book PDF"):
         file_name="coloring_book.pdf",
         mime="application/pdf"
     )
+
