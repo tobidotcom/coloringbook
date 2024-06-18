@@ -4,7 +4,7 @@ import os
 import requests
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Image
+from reportlab.platypus import SimpleDocTemplate, Image, PageBreak
 from reportlab.lib.units import inch
 
 # Set Replicate API token from Streamlit secrets
@@ -23,19 +23,21 @@ if st.button("Generate Coloring Book PDF"):
     for prompt in prompt_list:
         output = replicate.run(
             "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
-            input={"prompt": prompt}
+            input={"prompt": prompt, "width": 2550, "height": 3300}  # Set desired image dimensions
         )
         image_url = output[0]  # Assuming the model returns a list with a single URL
         images.append(image_url)
 
     # Create a PDF file with the generated images
-    doc = SimpleDocTemplate("coloring_book.pdf", pagesize=letter)
+    doc = SimpleDocTemplate("coloring_book.pdf", pagesize=(8.5*inch, 11*inch))  # Set page size to 8.5 x 11 inches
     elements = []
     for image_url in images:
         response = requests.get(image_url)
         image_file = BytesIO(response.content)
-        image = Image(image_file, 6*inch, 6*inch)
+        image = Image(image_file, 8*inch, 8*inch)  # Adjust image size if needed
         elements.append(image)
+        elements.append(PageBreak())  # Add a page break after each image
+
     doc.build(elements)
 
     # Display the PDF download link
