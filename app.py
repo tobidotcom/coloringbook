@@ -1,35 +1,32 @@
 from openai import OpenAI
-import streamlit as st  # Import streamlit first
 
-# Initialize OpenAI client with API key from Streamlit secrets
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-def generate_mandala_prompt(prompt):
-    messages = [
-        {"role": "system", "content": "You are an AI assistant specializing in generating detailed and compelling prompts for creating coloring book mandala images. Your task is to take a given prompt and enhance it by adding vivid descriptions, imaginative concepts, and specific details that would make for an engaging and visually appealing black and white coloring book page mandala."},
-        {"role": "user", "content": f"Generate a detailed and compelling black and white coloring book page mandala prompt based on the following: {prompt}"}
-    ]
+client = OpenAI(api_key=st.secrets["openai_api_key"])
+import streamlit as st
 
-    response = client.chat.completions.create(model="gpt-4o",
-    messages=messages,
-    max_tokens=4096,
+# Set up OpenAI API key from Streamlit secrets
+
+# Function to generate image prompts
+def generate_image_prompts(topic, num_prompts):
+    prompt = f"Generate {num_prompts} creative and unique prompts for black and white coloring book page mandalas on the topic of {topic}. Separate each prompt with a line break."
+    response = client.completions.create(engine="gpt-4o",
+    prompt=prompt,
+    max_tokens=1000,
     n=1,
     stop=None,
     temperature=0.7)
+    prompts = response.choices[0].text.strip().split("\n")
+    return prompts
 
-    generated_prompt = response.choices[0].message.content.strip() + " black and white coloring book page mandala"
+# Streamlit app
+def main():
+    st.title("Coloring Book Image Generator")
+    topic = st.text_input("Enter a topic for the image prompts")
+    num_prompts = st.number_input("Number of prompts to generate", min_value=1, max_value=100, value=10)
+    if st.button("Generate Prompts"):
+        prompts = generate_image_prompts(topic, num_prompts)
+        st.write("Generated Prompts:")
+        for prompt in prompts:
+            st.write(f"- {prompt}")
 
-    return generated_prompt
-
-# Initialize OpenAI client with API key from Streamlit secrets
-
-# Generate 100 coloring book mandala prompts
-prompts = []
-for i in range(100):
-    initial_prompt = "A mandala design inspired by..."  # Replace with your desired initial prompt
-    generated_prompt = generate_mandala_prompt(initial_prompt)
-    prompts.append(generated_prompt)
-
-# Print the generated prompts
-for prompt in prompts:
-    print(prompt)
-    print()
+if __name__ == "__main__":
+    main()
