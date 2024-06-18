@@ -9,6 +9,16 @@ from reportlab.lib.units import inch
 from reportlab.lib.colors import black
 from reportlab.graphics.shapes import Rect
 
+# Function to create a blank page
+def create_blank_page(page_size):
+    blank_page = PageBreak()
+    elements = [blank_page]
+    doc = SimpleDocTemplate("blank_page.pdf", pagesize=page_size)
+    doc.build(elements)
+    with open("blank_page.pdf", "rb") as blank_file:
+        blank_pdf = blank_file.read()
+    return blank_pdf
+
 # Set Replicate API token from Streamlit secrets
 os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
 
@@ -62,13 +72,3 @@ if st.button("Generate Coloring Book PDF"):
         file_name="coloring_book.pdf",
         mime="application/pdf"
     )
-
-# Function to create a blank page
-def create_blank_page(page_size):
-    blank_page = PageBreak()
-    elements = [blank_page]
-    doc = SimpleDocTemplate("blank_page.pdf", pagesize=page_size)
-    doc.build(elements)
-    with open("blank_page.pdf", "rb") as blank_file:
-        blank_pdf = blank_file.read()
-    return blank_pdf
