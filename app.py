@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Image, PageBreak, KeepTogether
 from reportlab.lib.units import inch
 from reportlab.lib.colors import black
-from reportlab.platypus import Spacer
+from reportlab.platypus import Rect
 
 # Set Replicate API token from Streamlit secrets
 os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
@@ -46,7 +46,6 @@ if st.button("Generate Coloring Book PDF"):
         blank_page_data = create_blank_page((8.5*inch, 11*inch))
 
         # Add a solid line around the image
-        from reportlab.platypus import Rect
         rect = Rect(0, 0, 8*inch, 8*inch, strokeColor=black, strokeWidth=1)
         centered_elements = [KeepTogether([rect, image, blank_page_data])]
         elements.extend(centered_elements)
@@ -73,4 +72,3 @@ def create_blank_page(page_size):
     with open("blank_page.pdf", "rb") as blank_file:
         blank_pdf = blank_file.read()
     return blank_pdf
-
