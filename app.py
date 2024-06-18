@@ -1,6 +1,8 @@
 import streamlit as st
 import replicate
 import os
+import requests
+from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Image
 from reportlab.lib.units import inch
@@ -29,7 +31,9 @@ if st.button("Generate Coloring Book PDF"):
     doc = SimpleDocTemplate("coloring_book.pdf", pagesize=letter)
     elements = []
     for image_url in images:
-        image = Image(image_url, 6*inch, 6*inch)
+        response = requests.get(image_url)
+        image_file = BytesIO(response.content)
+        image = Image(image_file, 6*inch, 6*inch)
         elements.append(image)
     doc.build(elements)
     
