@@ -27,7 +27,7 @@ if st.button("Generate Coloring Book PDF"):
     for prompt in prompt_list:
         input = {
             "prompt": prompt,
-            "negative_prompt": "complex, realistic, color, gradient, cropped, cut off, out of frame",  # Modified negative prompt
+            "negative_prompt": "complex, realistic, color, gradient, cropped, cut off, out of frame",
             "width": 1024,
             "height": 1024
         }
@@ -35,19 +35,20 @@ if st.button("Generate Coloring Book PDF"):
             "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
             input=input
         )
-        image_url = output[0]  # Assuming the model returns a list with a single URL
+        image_url = output[0]
         images.append(image_url)
 
     # Create a PDF file with the generated images
-    doc = SimpleDocTemplate("coloring_book.pdf", pagesize=(8.5*inch, 11*inch))  # Set page size to 8.5 x 11 inches
+    doc = SimpleDocTemplate("coloring_book.pdf", pagesize=(8.5*inch, 11*inch))
     elements = []
-    for i, image_url in enumerate(images):
-        if i % 2 == 0:
+    for i, image_url in enumerate(images, start=1):
+        if i % 2 != 0:
+            response = requests.get(image_url)
+            image_file = BytesIO(response.content)
+            image = Image(image_file, 8*inch, 8*inch)
+            elements.append(image)
+        else:
             elements = add_blank_page(elements)
-        response = requests.get(image_url)
-        image_file = BytesIO(response.content)
-        image = Image(image_file, 8*inch, 8*inch)  # Adjust image size if needed
-        elements.append(image)
 
     doc.build(elements)
 
