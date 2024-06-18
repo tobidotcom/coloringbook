@@ -4,18 +4,8 @@ import os
 import requests
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, PageBreak, Image
+from reportlab.platypus import SimpleDocTemplate, Image, PageBreak
 from reportlab.lib.units import inch
-
-# Function to create a blank page
-def create_blank_page(page_size):
-    blank_page = PageBreak()
-    elements = [blank_page]
-    doc = SimpleDocTemplate("blank_page.pdf", pagesize=page_size)
-    doc.build(elements)
-    with open("blank_page.pdf", "rb") as blank_file:
-        blank_pdf = blank_file.read()
-    return blank_pdf
 
 # Set Replicate API token from Streamlit secrets
 os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
@@ -23,6 +13,10 @@ os.environ["REPLICATE_API_TOKEN"] = st.secrets["REPLICATE_API_TOKEN"]
 st.title("Coloring Book PDF Generator")
 
 prompts = st.text_area("Enter your prompts (one per line):")
+
+def add_blank_page(elements):
+    elements.append(PageBreak())
+    return elements
 
 if st.button("Generate Coloring Book PDF"):
     # Split prompts into a list
@@ -47,16 +41,13 @@ if st.button("Generate Coloring Book PDF"):
     # Create a PDF file with the generated images
     doc = SimpleDocTemplate("coloring_book.pdf", pagesize=(8.5*inch, 11*inch))  # Set page size to 8.5 x 11 inches
     elements = []
-    for image_url in images:
+    for i, image_url in enumerate(images):
+        if i % 2 == 0:
+            elements = add_blank_page(elements)
         response = requests.get(image_url)
         image_file = BytesIO(response.content)
-        blank_page_data = create_blank_page((8.5*inch, 11*inch))
-
-        # Add the image to the PDF
-        image = Image(image_file, 8*inch, 8*inch)
+        image = Image(image_file, 8*inch, 8*inch)  # Adjust image size if needed
         elements.append(image)
-        elements.append(blank_page_data)
-        elements.append(PageBreak())  # Add a page break after each image
 
     doc.build(elements)
 
