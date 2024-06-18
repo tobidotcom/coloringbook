@@ -29,7 +29,7 @@ if st.button("Generate Coloring Book PDF"):
             "cbaf592788a0513ff5ca3beecdc0d9280fb44908771656f2adef630a263d9ebe",
             input=input
         )
-        image_url = prediction.output[0]  # Assuming the model returns a list with a single URL
+        image_url = prediction.output  # Assuming the model returns a single URL as a string
         images.append(image_url)
 
     # Create a PDF file with the generated images
@@ -51,4 +51,3 @@ if st.button("Generate Coloring Book PDF"):
         file_name="coloring_book.pdf",
         mime="application/pdf"
     )
-
