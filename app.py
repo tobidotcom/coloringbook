@@ -24,8 +24,8 @@ if st.button("Generate Coloring Book PDF"):
         input = {
             "prompt": prompt,
             "negative_prompt": "complex, realistic, color, gradient",
-            "width": 2560,  # Divisible by 8
-            "height": 3328  # Divisible by 8
+            "width": 1280,  # Lowered width
+            "height": 1664  # Calculated height to maintain aspect ratio
         }
         output = replicate.run(
             "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
@@ -55,4 +55,3 @@ if st.button("Generate Coloring Book PDF"):
         file_name="coloring_book.pdf",
         mime="application/pdf"
     )
-
