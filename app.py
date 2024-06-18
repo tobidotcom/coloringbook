@@ -5,8 +5,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Image
 from reportlab.lib.units import inch
 
-# Set Replicate API key from Streamlit secrets
-replicate.init(api_key=os.environ.get("REPLICATE_API_KEY"))
+# Set Replicate API token from Streamlit secrets
+replicate.init(api_token=os.environ.get("REPLICATE_API_TOKEN"))
 
 st.title("Coloring Book PDF Generator")
 
