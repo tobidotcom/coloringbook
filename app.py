@@ -1,10 +1,8 @@
 from openai import OpenAI
-
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 import streamlit as st  # Import streamlit first
 
 # Initialize OpenAI client with API key from Streamlit secrets
-
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 def generate_mandala_prompt(prompt):
     messages = [
         {"role": "system", "content": "You are an AI assistant specializing in generating detailed and compelling prompts for creating coloring book mandala images. Your task is to take a given prompt and enhance it by adding vivid descriptions, imaginative concepts, and specific details that would make for an engaging and visually appealing black and white coloring book page mandala."},
