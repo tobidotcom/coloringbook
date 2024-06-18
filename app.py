@@ -4,10 +4,11 @@ import os
 import requests
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Image, PageBreak, KeepTogether
+from reportlab.platypus import SimpleDocTemplate, PageBreak
 from reportlab.lib.units import inch
 from reportlab.lib.colors import black
 from reportlab.graphics.shapes import Rect
+from reportlab.graphics import renderPDF
 
 # Function to create a blank page
 def create_blank_page(page_size):
@@ -52,39 +53,25 @@ if st.button("Generate Coloring Book PDF"):
     for image_url in images:
         response = requests.get(image_url)
         image_file = BytesIO(response.content)
-        image = Image(image_file, 8*inch, 8*inch)  # Adjust image size if needed
         blank_page_data = create_blank_page((8.5*inch, 11*inch))
 
-        # Add a solid line around the image
-        rect = Rect(0, 0, 8*inch, 8*inch, strokeColor=black, strokeWidth=1)
-        centered_elements = [rect, image, blank_page_data]
-        elements.extend(centered_elements)
-        elements.append(PageBreak())  # Add a page break after each image
+        # Draw the image and the rectangle on the canvas
+        from reportlab.lib.pagesizes import letter
+        from reportlab.platypus import SimpleDocTemplate, PageBreak
+        from reportlab.lib.units import inch
+        from reportlab.lib.colors import black
+        from reportlab.graphics.shapes import Rect
+        from reportlab.graphics import renderPDF
 
-    doc.build(elements)
+        packet = []
+        image_width, image_height = 8*inch, 8*inch
+        image = renderPDF.drawInlineImage(image_file, 0, 0, image_width, image_height)
+        rect = Rect(0, 0, image_width, image_height, strokeColor=black, strokeWidth=1)
+        packet.append(image)
+        packet.append(rect)
 
-    # Display the PDF download link
-    with open("coloring_book.pdf", "rb") as pdf_file:
-        pdf_bytes = pdf_file.read()
-    st.download_button(
-        label="Download Coloring Book PDF",
-        data=pdf_bytes,
-        file_name="coloring_book.pdf",
-        mime="application/pdf"
-    )
-
-    doc = SimpleDocTemplate("coloring_book.pdf", pagesize=(8.5*inch, 11*inch))  # Set page size to 8.5 x 11 inches
-    elements = []
-    for image_url in images:
-        response = requests.get(image_url)
-        image_file = BytesIO(response.content)
-        image = Image(image_file, 8*inch, 8*inch)  # Adjust image size if needed
-        blank_page_data = create_blank_page((8.5*inch, 11*inch))
-
-        # Add a solid line around the image
-        rect = Rect(0, 0, 8*inch, 8*inch, strokeColor=black, strokeWidth=1)
-        centered_elements = [KeepTogether([rect, image, blank_page_data])]
-        elements.extend(centered_elements)
+        elements.append(packet)
+        elements.append(blank_page_data)
         elements.append(PageBreak())  # Add a page break after each image
 
     doc.build(elements)
