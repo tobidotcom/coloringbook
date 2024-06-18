@@ -21,9 +21,15 @@ if st.button("Generate Coloring Book PDF"):
     # Run Replicate model on each prompt
     images = []
     for prompt in prompt_list:
+        input = {
+            "prompt": prompt,
+            "negative_prompt": "complex, realistic, color, gradient",
+            "width": 2560,  # Divisible by 8
+            "height": 3328  # Divisible by 8
+        }
         output = replicate.run(
             "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
-            input={"prompt": prompt, "width": 2550, "height": 3300}  # Set desired image dimensions
+            input=input
         )
         image_url = output[0]  # Assuming the model returns a list with a single URL
         images.append(image_url)
