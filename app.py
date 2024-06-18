@@ -1,7 +1,9 @@
 from openai import OpenAI
 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-import streamlit as st
+import streamlit as st  # Import streamlit first
+
+# Initialize OpenAI client with API key from Streamlit secrets
 
 def generate_mandala_prompt(prompt):
     messages = [
@@ -9,7 +11,7 @@ def generate_mandala_prompt(prompt):
         {"role": "user", "content": f"Generate a detailed and compelling black and white coloring book page mandala prompt based on the following: {prompt}"}
     ]
 
-    response = client.chat.completions.create(model="gpt-4",
+    response = client.chat.completions.create(model="gpt-4o",
     messages=messages,
     max_tokens=4096,
     n=1,
