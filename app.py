@@ -21,11 +21,15 @@ if st.button("Generate Coloring Book PDF"):
     # Run Replicate model on each prompt
     images = []
     for prompt in prompt_list:
-        output = replicate.run(
-            "pnickolas1/sdxl-coloringbook:d2b110483fdce03119b21786d823f10bb3f5a7c49a7429da784c5017df096d33",
-            input={"prompt": prompt}
+        input = {
+            "prompt": prompt,
+            "negative_prompt": "complex, realistic, color, gradient"
+        }
+        prediction = replicate.predictions.create(
+            "cbaf592788a0513ff5ca3beecdc0d9280fb44908771656f2adef630a263d9ebe",
+            input=input
         )
-        image_url = output[0]  # Assuming the model returns a list with a single URL
+        image_url = prediction.output[0]  # Assuming the model returns a list with a single URL
         images.append(image_url)
 
     # Create a PDF file with the generated images
